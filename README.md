@@ -2,21 +2,26 @@
 
 A simple, free tool for building a school's weekly timetable. Add your teachers and subjects, say who teaches what, click one button, and get a clean weekly schedule for every class and every teacher — ready to view, print, or download as a PDF.
 
-You do **not** need to know how to code to use this. This guide walks you through everything, one step at a time, assuming you've never opened a terminal before.
+You do **not** need to know how to code to use this. This guide assumes you have never installed a program like this before, never used VS Code, and never typed a command into a terminal. Every single step is spelled out for both **Mac** and **Windows**.
 
 ---
 
 ## Table of contents
 
 1. [What this app actually does](#what-this-app-actually-does)
-2. [What you need before you start](#what-you-need-before-you-start)
-3. [Getting the app onto your computer](#getting-the-app-onto-your-computer)
-4. [Starting the app](#starting-the-app)
-5. [Using the app, step by step](#using-the-app-step-by-step)
-6. [Extra features](#extra-features)
-7. [Common questions](#common-questions)
-8. [Stopping and restarting the app](#stopping-and-restarting-the-app)
-9. [What's under the hood](#whats-under-the-hood-technical-readers)
+2. [Step 1: Install Node.js](#step-1-install-nodejs)
+3. [Step 2: Install VS Code](#step-2-install-vs-code)
+4. [Step 3: Download the project](#step-3-download-the-project)
+5. [Step 4: Open the project in VS Code](#step-4-open-the-project-in-vs-code)
+6. [Step 5: Open the Terminal inside VS Code](#step-5-open-the-terminal-inside-vs-code)
+7. [Step 6: Install the app's pieces (one-time)](#step-6-install-the-apps-pieces-one-time)
+8. [Step 7: Start the app](#step-7-start-the-app)
+9. [Step 8: Open the app in your browser](#step-8-open-the-app-in-your-browser)
+10. [Using the app, step by step](#using-the-app-step-by-step)
+11. [Extra features](#extra-features)
+12. [Stopping the app, and starting it again later](#stopping-the-app-and-starting-it-again-later)
+13. [Common questions](#common-questions)
+14. [What's under the hood](#whats-under-the-hood-technical-readers)
 
 ---
 
@@ -33,18 +38,35 @@ Then you click **one button**, and it automatically lays out a full week's sched
 
 Every class and every teacher then gets their own personal page you can look at, print, or save as a PDF.
 
+Everything below is a one-time setup (Steps 1–6). Once it's done, starting the app again later only takes Steps 7–8, which take about 10 seconds.
+
 ---
 
-## What you need before you start
+## Step 1: Install Node.js
 
-You need one free program installed on your computer called **Node.js**. It's what actually runs this app.
+Node.js is the free program that actually runs this app. You install it once, like any other program.
 
-1. Go to **[nodejs.org](https://nodejs.org)**
-2. Click the big green button that says **"LTS"** (this just means the stable, recommended version)
-3. Open the file it downloads and click through the installer (Next, Next, Install, Finish) — the default settings are fine
-4. That's it. You don't need to understand what Node.js is, just that it needs to be installed once.
+### On Mac
 
-**How to check it worked:** Open your computer's terminal app —
+1. Open your web browser and go to **[nodejs.org](https://nodejs.org)**
+2. You'll see a big button that says **"LTS"** — click it to download
+3. Open your **Downloads** folder and double-click the file you just downloaded (it will be named something like `node-v20.11.0.pkg`)
+4. An installer window will open. Click **Continue**, **Continue**, **Agree**, **Install**
+5. It may ask for your Mac password — type it in and click **Install Software**
+6. Click **Close** when it finishes
+
+### On Windows
+
+1. Open your web browser and go to **[nodejs.org](https://nodejs.org)**
+2. You'll see a big button that says **"LTS"** — click it to download
+3. Open your **Downloads** folder and double-click the file you just downloaded (it will be named something like `node-v20.11.0-x64.msi`)
+4. An installer window will open. Click **Next**, tick the box to accept the agreement, then keep clicking **Next** through each screen
+5. Click **Install**, then **Finish**
+
+### Check it worked (both Mac and Windows)
+
+We'll properly open a terminal in Step 5, but for a quick check right now:
+
 - **Mac:** press `Cmd + Space`, type `Terminal`, press Enter
 - **Windows:** press the Windows key, type `cmd`, press Enter
 
@@ -54,63 +76,108 @@ Type this and press Enter:
 node -v
 ```
 
-If you see something like `v20.11.0`, it worked. If you see an error, Node.js didn't install correctly — try the steps above again.
+If you see something like `v20.11.0`, it worked. If you see an error instead, restart your computer and try again — sometimes the installer needs a restart to finish setting up.
 
 ---
 
-## Getting the app onto your computer
+## Step 2: Install VS Code
 
-If you already have this project folder on your computer (e.g. you were given a `TMS` folder), skip to [Starting the app](#starting-the-app).
+VS Code is a free program for viewing and running project folders like this one. You don't need to know how to write code to use it here — we're only using its built-in terminal.
 
-Otherwise, to download it from GitHub:
+### On Mac
 
-1. Go to the repository page in your browser
-2. Click the green **"Code"** button, then **"Download ZIP"**
-3. Find the downloaded ZIP file (usually in your Downloads folder) and double-click it to unzip it
-4. You'll now have a folder called `TMS` — move it somewhere easy to find, like your Desktop
+1. Go to **[code.visualstudio.com](https://code.visualstudio.com)**
+2. Click the big download button (it should automatically detect Mac)
+3. Open your **Downloads** folder — you'll see a file called `VSCode-darwin-universal.zip`, which unzips itself into an app called **Visual Studio Code**
+4. Drag **Visual Studio Code** into your **Applications** folder
+5. Open it from Applications (the first time, you may need to right-click it and choose **Open**, then confirm, since it was downloaded from the internet)
 
-**If you know what Git is**, you can instead run:
-```bash
-git clone https://github.com/24f2000777/TMS.git
-```
+### On Windows
+
+1. Go to **[code.visualstudio.com](https://code.visualstudio.com)**
+2. Click the big download button (it should automatically detect Windows)
+3. Open your **Downloads** folder and double-click the installer file (named something like `VSCodeUserSetup-x64-...exe`)
+4. Click **I accept the agreement**, then **Next** through each screen (the default options are fine)
+5. Click **Install**, then **Finish** — VS Code will open automatically
 
 ---
 
-## Starting the app
+## Step 3: Download the project
 
-Every time you want to use the app, you do these two things:
+1. Go to this project's GitHub page in your browser: **https://github.com/24f2000777/TMS**
+2. Click the green **"Code"** button
+3. Click **"Download ZIP"**
+4. Find the downloaded file in your **Downloads** folder — it will be called `TMS-main.zip`
+5. **Unzip it:**
+   - **Mac:** double-click the ZIP file — it creates a folder called `TMS-main`
+   - **Windows:** right-click the ZIP file and choose **"Extract All..."**, then click **Extract**
+6. **Rename and move the folder:** rename `TMS-main` to just `TMS`, and drag it onto your **Desktop** so it's easy to find
 
-1. Open your terminal (Mac: `Cmd + Space` → type `Terminal`. Windows: Windows key → type `cmd`)
-2. Type the following, one line at a time, pressing Enter after each:
+You should now have a folder on your Desktop called `TMS`.
 
-```bash
-cd Desktop/TMS
-```
-*(This tells the terminal "go into the TMS folder." If you put the folder somewhere other than your Desktop, adjust the path accordingly.)*
+---
 
-The very first time only, also run:
+## Step 4: Open the project in VS Code
+
+1. Open **VS Code**
+2. Click **File** (top menu) → **Open Folder...**
+3. Navigate to your Desktop, select the **TMS** folder, and click **Open** (on Mac you may need to click **Open** again to confirm)
+4. You'll see a list of files and folders appear on the left-hand side — that means it worked
+
+---
+
+## Step 5: Open the Terminal inside VS Code
+
+VS Code has a built-in terminal, so you never need to switch to a separate app.
+
+1. With the TMS folder open in VS Code, click **Terminal** (top menu) → **New Terminal**
+2. A panel will open at the bottom of the window with a blinking cursor, already pointed at your TMS folder
+
+This is where you'll type the commands in the next two steps.
+
+---
+
+## Step 6: Install the app's pieces (one-time)
+
+In the terminal panel you just opened, type this and press Enter:
+
 ```bash
 npm install
 ```
-*(This downloads the small pieces of code the app depends on. It takes a minute or two and you'll see a lot of text scroll by — that's normal. You only ever need to do this once.)*
 
-Then, every time, run:
+You'll see a lot of text scroll by for a minute or two — that's completely normal, it's just downloading the small pieces of code this app depends on. When it stops and gives you back a blinking cursor, it's done.
+
+**You only ever need to do this once**, even if you close VS Code and come back days later. Skip this step next time.
+
+---
+
+## Step 7: Start the app
+
+In the same terminal, type this and press Enter:
+
 ```bash
 node server.js
 ```
 
-You'll see this message:
+You should see:
+
 ```
 TMS running at http://localhost:3000
 ```
 
-**Leave this terminal window open** — closing it turns the app off. Now open your web browser (Chrome, Safari, Edge, whatever you normally use) and go to:
+**Leave this terminal panel open and VS Code running** — the app only works while this is running. Closing VS Code or pressing a key that stops this will turn the app off.
+
+---
+
+## Step 8: Open the app in your browser
+
+Open any web browser (Chrome, Safari, Edge — whichever you normally use) and type this into the address bar:
 
 ```
 http://localhost:3000
 ```
 
-You're in.
+Press Enter. You're in.
 
 ---
 
@@ -190,19 +257,35 @@ These are optional, for when the basics aren't quite enough:
 
 ---
 
+## Stopping the app, and starting it again later
+
+**To stop the app:** click into the terminal panel in VS Code where it's running, and press `Ctrl + C` (on both Mac and Windows).
+
+**To start it again later** (any time after today — you've already done the one-time setup):
+
+1. Open **VS Code**
+2. **File** → **Open Folder...** → select your **TMS** folder → **Open**
+3. **Terminal** → **New Terminal**
+4. Type `node server.js` and press Enter
+5. Open your browser to `http://localhost:3000`
+
+You do **not** need to run `npm install` again — that was a one-time step.
+
+---
+
 ## Common questions
 
-**"I closed the terminal and now the website won't load."**
-The app only runs while that terminal window is open. Open a new terminal, `cd` into the TMS folder, and run `node server.js` again.
+**"I closed VS Code and now the website won't load."**
+The app only runs while VS Code's terminal is open and `node server.js` is running. Follow the "start it again later" steps above.
 
 **"Do I need the internet to use this?"**
-No — once it's installed, everything runs on your own computer. The only thing you need the internet for is the one-time download/install steps.
+No — once everything is installed, the app itself runs entirely on your own computer. You only need the internet for the one-time install steps.
 
 **"Can other teachers access it from their own computers?"**
 Not by default — it only runs on the computer where you started it, and only that computer can open `http://localhost:3000`. If you want other people on other devices to access it, that requires some extra setup (hosting it online) — ask if you want help with that.
 
 **"I made a mistake, how do I start completely fresh?"**
-Close the terminal, find the file called `tms.db` inside the TMS folder, and delete it. Next time you run `node server.js`, it will create a brand new, empty database.
+In VS Code's file list on the left, find the file called `tms.db` inside the TMS folder, right-click it, and delete it. Next time you run `node server.js`, it will create a brand new, empty database.
 
 **"The page looks broken / buttons are missing."**
 Try a hard refresh: hold `Shift` and click the browser's refresh button (or press `Cmd+Shift+R` on Mac, `Ctrl+Shift+R` on Windows).
@@ -210,18 +293,8 @@ Try a hard refresh: hold `Shift` and click the browser's refresh button (or pres
 **"Where is my data saved?"**
 Everything you enter is saved automatically in a file called `tms.db` inside the TMS folder. There's no "Save" button to remember — every change is saved instantly.
 
----
-
-## Stopping and restarting the app
-
-To stop the app: click into the terminal window where it's running and press `Ctrl + C`.
-
-To start it again later: open a terminal, run:
-```bash
-cd Desktop/TMS
-node server.js
-```
-(no need to run `npm install` again unless you deleted the `node_modules` folder)
+**"I typed `node server.js` and got a red error instead of 'TMS running...'"**
+Make sure you're in the right folder. In the terminal, type `pwd` (Mac) or `cd` (Windows) and press Enter to see which folder you're in — it should end in `TMS`. If it doesn't, close the terminal, re-open it with **Terminal → New Terminal** while the TMS folder is open in VS Code, and try again.
 
 ---
 
