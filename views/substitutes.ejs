@@ -1,0 +1,100 @@
+<%- include('partials/header', { active: 'substitutes' }) %>
+
+<h1>Substitutes
+  <span class="subtitle">Cover a teacher's periods for a single date without touching the permanent timetable</span>
+</h1>
+
+<% if (error) { %><div class="msg error"><%= error %></div><% } %>
+
+<div class="card">
+  <div class="card-header"><h2>Find a teacher's periods</h2></div>
+  <% if (teachers.length === 0) { %>
+    <p class="empty-state">Add a teacher first.</p>
+  <% } else { %>
+    <form method="GET" action="/substitutes" class="form-row">
+      <div class="form-stack">
+        <label>Date</label>
+        <input type="date" name="date" value="<%= date %>">
+      </div>
+      <div class="form-stack">
+        <label>Absent teacher</label>
+        <select name="teacher_id" required>
+          <option value="">Choose a teacher</option>
+          <% teachers.forEach(function(t) { %>
+            <option value="<%= t.id %>" <%= absentTeacherId === t.id ? 'selected' : '' %>><%= t.name %></option>
+          <% }) %>
+        </select>
+      </div>
+      <button type="submit" style="align-self:flex-end">Show Periods</button>
+    </form>
+  <% } %>
+
+  <% if (absentTeacherId && dayIndex === null) { %>
+    <p class="empty-state" style="margin-top:14px">That date does not match any configured weekday.</p>
+  <% } %>
+
+  <% if (absentTeacherId && dayIndex !== null) { %>
+    <% if (periods.length === 0) { %>
+      <p class="empty-state" style="margin-top:14px">This teacher has no periods on <%= dayName %>.</p>
+    <% } else { %>
+      <div class="table-wrap" style="margin-top:14px">
+        <table>
+          <tr><th>Period</th><th>Class</th><th>Subject</th><th>Substitute</th><th></th></tr>
+          <% periods.forEach(function(p) { %>
+            <tr>
+              <td><%= p.periodLabel %></td>
+              <td><%= p.className %></td>
+              <td><%= p.subject %></td>
+              <td colspan="2">
+                <form method="POST" action="/substitutes" class="form-row">
+                  <input type="hidden" name="date" value="<%= date %>">
+                  <input type="hidden" name="teacher_id" value="<%= absentTeacherId %>">
+                  <input type="hidden" name="class_id" value="<%= p.class_id %>">
+                  <input type="hidden" name="period" value="<%= p.period %>">
+                  <input type="hidden" name="assignment_id" value="<%= p.assignment_id %>">
+                  <select name="substitute_teacher_id">
+                    <option value="">No substitute</option>
+                    <% p.freeTeachers.forEach(function(ft) { %>
+                      <option value="<%= ft.id %>" <%= p.currentSubstituteId === ft.id ? 'selected' : '' %>><%= ft.name %></option>
+                    <% }) %>
+                  </select>
+                  <button type="submit">Save</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </table>
+      </div>
+    <% } %>
+  <% } %>
+</div>
+
+<div class="card">
+  <div class="card-header"><h2>Upcoming substitutions</h2></div>
+  <% if (upcoming.length === 0) { %>
+    <p class="empty-state">None scheduled.</p>
+  <% } else { %>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Date</th><th>Period</th><th>Class</th><th>Subject</th><th>Absent</th><th>Covering</th><th></th></tr>
+        <% upcoming.forEach(function(u) { %>
+          <tr>
+            <td><%= u.date %></td>
+            <td>P<%= u.period + 1 %></td>
+            <td><%= u.className %></td>
+            <td><%= u.subject %></td>
+            <td><%= u.original_teacher_name %></td>
+            <td><%= u.substitute_teacher_name || 'Unassigned' %></td>
+            <td>
+              <form method="POST" action="/substitutes/<%= u.id %>/delete" onsubmit="return confirm('Remove this substitution?')">
+                <button type="submit" class="danger">Remove</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

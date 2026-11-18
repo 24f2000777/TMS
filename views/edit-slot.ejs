@@ -1,0 +1,30 @@
+<%- include('partials/header') %>
+
+<h1><%= cls.name %>
+  <span class="subtitle"><%= dayName %>, <%= periodLabel %></span>
+</h1>
+
+<div class="card" style="max-width:480px">
+  <div class="card-header"><h2>Manual override</h2></div>
+  <p class="section-intro">Reassign or clear this single period without running a full regeneration. Changing a combined assignment here only updates <%= cls.name %>; the linked class keeps its own slot until the next full generate.</p>
+
+  <form method="POST" action="/timetable/class/<%= cls.id %>/edit/<%= day %>/<%= period %>">
+    <div class="form-stack">
+      <label>Assignment</label>
+      <select name="assignment_id">
+        <option value="">Leave empty (free period)</option>
+        <% options.forEach(function(o) { %>
+          <option value="<%= o.id %>" <%= currentAssignmentId === o.id ? 'selected' : '' %>>
+            <%= o.teacher_name %> / <%= o.subject_name %>
+          </option>
+        <% }) %>
+      </select>
+    </div>
+    <div class="form-row" style="margin-top:16px">
+      <button type="submit">Save</button>
+      <a href="/timetable/class/<%= cls.id %>"><button type="button" class="secondary">Cancel</button></a>
+    </div>
+  </form>
+</div>
+
+<%- include('partials/footer') %>

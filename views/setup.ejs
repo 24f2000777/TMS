@@ -1,0 +1,149 @@
+<%- include('partials/header', { active: 'setup' }) %>
+
+<h1>Setup
+  <span class="subtitle">Teachers, subjects, classes, rooms, and week structure</span>
+</h1>
+
+<% if (error) { %><div class="msg error"><%= error %></div><% } %>
+
+<div class="card">
+  <div class="card-header"><h2>Week structure</h2></div>
+  <form method="POST" action="/setup/settings">
+    <div class="form-row">
+      <div class="form-stack">
+        <label>Days (comma-separated)</label>
+        <input type="text" name="days" value="<%= settings.days.join(', ') %>" size="40">
+      </div>
+      <div class="form-stack">
+        <label>Periods/day</label>
+        <input type="number" name="periods_per_day" value="<%= settings.periods_per_day %>" min="1" max="12" style="width:90px">
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <label>Break periods (never scheduled, e.g. lunch)</label>
+      <div class="checkbox-group">
+        <% for (let p = 0; p < settings.periods_per_day; p++) { %>
+          <label class="checkbox-pill">
+            <input type="checkbox" name="break_periods" value="<%= p %>" <%= settings.break_periods.includes(p) ? 'checked' : '' %>>
+            P<%= p + 1 %>
+          </label>
+        <% } %>
+      </div>
+    </div>
+    <div style="margin-top:14px"><button type="submit">Save</button></div>
+  </form>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><h2>Teachers</h2></div>
+    <form class="form-row" method="POST" action="/setup/teachers">
+      <input type="text" name="name" placeholder="Teacher name" required>
+      <button type="submit">Add</button>
+    </form>
+    <% teachers.forEach(function(t) { %>
+      <div class="list-row">
+        <span><%= t.name %></span>
+        <form method="POST" action="/setup/teachers/<%= t.id %>/delete" onsubmit="return confirm('Remove this teacher? Their assignments will also be removed.')">
+          <button type="submit" class="danger">Remove</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Subjects</h2></div>
+    <form class="form-row" method="POST" action="/setup/subjects">
+      <input type="text" name="name" placeholder="Subject name" required>
+      <button type="submit">Add</button>
+    </form>
+    <% subjects.forEach(function(s) { %>
+      <div class="list-row">
+        <span><%= s.name %></span>
+        <form method="POST" action="/setup/subjects/<%= s.id %>/delete" onsubmit="return confirm('Remove this subject? Related assignments will also be removed.')">
+          <button type="submit" class="danger">Remove</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Classes</h2></div>
+    <form class="form-row" method="POST" action="/setup/classes">
+      <input type="text" name="name" placeholder="e.g. 10A" required>
+      <button type="submit">Add</button>
+    </form>
+    <% classes.forEach(function(c) { %>
+      <div class="list-row">
+        <span><%= c.name %></span>
+        <form method="POST" action="/setup/classes/<%= c.id %>/delete" onsubmit="return confirm('Remove this class? Related assignments will also be removed.')">
+          <button type="submit" class="danger">Remove</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Rooms</h2></div>
+    <p class="section-intro">Optional. Attach a room to an assignment in Assignments to prevent double-booking a lab or hall.</p>
+    <form class="form-row" method="POST" action="/setup/rooms">
+      <input type="text" name="name" placeholder="e.g. Science Lab" required>
+      <button type="submit">Add</button>
+    </form>
+    <% rooms.forEach(function(r) { %>
+      <div class="list-row">
+        <span><%= r.name %></span>
+        <form method="POST" action="/setup/rooms/<%= r.id %>/delete" onsubmit="return confirm('Remove this room?')">
+          <button type="submit" class="danger">Remove</button>
+        </form>
+      </div>
+    <% }) %>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><h2>Teacher unavailability</h2></div>
+  <p class="section-intro">Tick the periods a teacher can never be scheduled in (part-time hours, other commitments). The generator treats these as hard blocks.</p>
+
+  <% if (teachers.length === 0) { %>
+    <p class="empty-state">Add a teacher first.</p>
+  <% } else { %>
+    <form method="GET" action="/setup" class="form-row" style="margin-bottom:14px">
+      <select name="teacher_id" onchange="this.form.submit()">
+        <% teachers.forEach(function(t) { %>
+          <option value="<%= t.id %>" <%= selectedTeacherId === t.id ? 'selected' : '' %>><%= t.name %></option>
+        <% }) %>
+      </select>
+    </form>
+
+    <div class="table-wrap">
+      <table>
+        <tr>
+          <th>Day</th>
+          <% for (let p = 0; p < settings.periods_per_day; p++) { %><th>P<%= p + 1 %></th><% } %>
+        </tr>
+        <% settings.days.forEach(function(day, d) { %>
+          <tr>
+            <td><strong><%= day %></strong></td>
+            <% for (let p = 0; p < settings.periods_per_day; p++) {
+                 const isUnavailable = unavailableSet.has(d + ':' + p);
+            %>
+              <td>
+                <form method="POST" action="/setup/unavailability">
+                  <input type="hidden" name="teacher_id" value="<%= selectedTeacherId %>">
+                  <input type="hidden" name="day" value="<%= d %>">
+                  <input type="hidden" name="period" value="<%= p %>">
+                  <button type="submit" class="<%= isUnavailable ? 'danger' : 'secondary' %>" style="width:100%">
+                    <%= isUnavailable ? 'Blocked' : 'Free' %>
+                  </button>
+                </form>
+              </td>
+            <% } %>
+          </tr>
+        <% }) %>
+      </table>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

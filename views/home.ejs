@@ -1,0 +1,67 @@
+<%- include('partials/header', { active: 'home' }) %>
+
+<h1>Timetable Management
+  <span class="subtitle">Generate, view, and print weekly schedules</span>
+</h1>
+
+<% if (success) { %><div class="msg success"><%= success %></div><% } %>
+<% if (warning) { %><div class="msg warning"><%= warning %></div><% } %>
+<% if (error) { %><div class="msg error"><%= error %></div><% } %>
+
+<% if (todaysSubstitutions && todaysSubstitutions.length > 0) { %>
+  <div class="card">
+    <div class="card-header"><h2>Today's substitutions</h2></div>
+    <div class="table-wrap">
+      <table>
+        <tr><th>Period</th><th>Class</th><th>Subject</th><th>Absent</th><th>Covering</th></tr>
+        <% todaysSubstitutions.forEach(function(s) { %>
+          <tr>
+            <td>P<%= s.period + 1 %></td>
+            <td><%= s.className %></td>
+            <td><%= s.subject %></td>
+            <td><%= s.original_teacher_name %></td>
+            <td><%= s.substitute_teacher_name || 'Unassigned' %></td>
+          </tr>
+        <% }) %>
+      </table>
+    </div>
+  </div>
+<% } %>
+
+<div class="card">
+  <div class="card-header"><h2>Generate timetable</h2></div>
+  <p class="section-intro">Run this after setting up teachers, subjects, classes, and assignments.</p>
+  <form method="POST" action="/timetable/generate">
+    <button type="submit">Generate Timetable</button>
+  </form>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-header"><h2>Class timetables</h2></div>
+    <% if (classes.length === 0) { %>
+      <p class="empty-state">No classes yet. <a href="/setup">Add some in Setup</a>.</p>
+    <% } else { %>
+      <div class="link-grid">
+        <% classes.forEach(function(c) { %>
+          <a href="/timetable/class/<%= c.id %>"><%= c.name %></a>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h2>Teacher timetables</h2></div>
+    <% if (teachers.length === 0) { %>
+      <p class="empty-state">No teachers yet. <a href="/setup">Add some in Setup</a>.</p>
+    <% } else { %>
+      <div class="link-grid">
+        <% teachers.forEach(function(t) { %>
+          <a href="/timetable/teacher/<%= t.id %>"><%= t.name %></a>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

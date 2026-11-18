@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+
+<h1><%= teacher.name %>
+  <span class="subtitle">Weekly timetable</span>
+</h1>
+
+<div class="form-row no-print" style="margin-bottom:16px">
+  <a href="/timetable/teacher/<%= teacher.id %>/pdf"><button>Download PDF</button></a>
+  <button class="secondary" onclick="window.print()">Print</button>
+</div>
+
+<div class="card">
+  <div class="table-wrap">
+    <table class="grid-table">
+      <tr>
+        <th>Day</th>
+        <% for (let p = 0; p < settings.periods_per_day; p++) { %>
+          <th class="<%= settings.break_periods.includes(p) ? 'break-cell' : '' %>">P<%= p + 1 %></th>
+        <% } %>
+      </tr>
+      <% for (let d = 0; d < settings.days.length; d++) { %>
+        <tr>
+          <td><strong><%= settings.days[d] %></strong></td>
+          <% for (let p = 0; p < settings.periods_per_day; p++) {
+               const cell = grid[d][p];
+               const isBreak = settings.break_periods.includes(p);
+          %>
+            <% if (isBreak) { %>
+              <td class="break-cell">Break</td>
+            <% } else if (cell) { %>
+              <td>
+                <span class="cell-subject"><%= cell.subject %></span>
+                <span class="cell-meta"><%= cell.className %></span>
+                <% if (cell.room) { %><span class="cell-meta"><%= cell.room %></span><% } %>
+                <% if (cell.locked) { %><span class="badge badge-locked">Fixed</span><% } %>
+              </td>
+            <% } else { %>
+              <td class="empty">Free</td>
+            <% } %>
+          <% } %>
+        </tr>
+      <% } %>
+    </table>
+  </div>
+</div>
+
+<%- include('partials/footer') %>
